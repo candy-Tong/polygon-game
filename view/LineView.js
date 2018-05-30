@@ -25,10 +25,13 @@ class LineView extends BaseView {
     }
 
     modify(begin, end,operation) {
-        begin ? this.dom.setAttribute('x1', begin.x) : false
-        begin ? this.dom.setAttribute('y1', begin.y) : false
-        end ? this.dom.setAttribute('x2', end.x) : false
-        end ? this.dom.setAttribute('y2', end.y) : false
+        if(begin&&end){
+            this.dom.setAttribute('x1', begin.x)
+            this.dom.setAttribute('y1', begin.y)
+            this.dom.setAttribute('x2', end.x)
+            this.dom.setAttribute('y2', end.y)
+        }
+
         operation?this.operation=operation:false
     }
 

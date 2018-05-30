@@ -8,10 +8,10 @@
 <svg id="board" width="80%" height="500px" ondrop="controller.addPoint(event)" ondragover="event.preventDefault()">
 </svg>
 <div>
-    <div class="drag-circle" draggable="true" ></div>
+    <div class="drag-circle" draggable="true"></div>
     Drag into the board
 </div>
-<input placeholder="random num" type="text" />
+<input placeholder="random num" type="text"/>
 <button type="button">Random</button>
 
 </body>
@@ -21,7 +21,8 @@
 </script>
 <script type="module">
     import {UIController} from "./controller/UIController.js";
-    controller=new UIController()
+
+    controller = new UIController()
 
 
 </script>
@@ -32,15 +33,23 @@
     circle {
         fill: #3498db;
         stroke: #95a5a622;
+        cursor: move;
     }
-    circle:hover{
-        padding: 20px;
+
+    text {
+        cursor: e-resize;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
     }
-    .drag-circle{
+
+    .drag-circle {
         display: inline-block;
         background-color: #3498db;
         border-radius: 100%;
         height: 50px;
         width: 50px;
+        cursor: move;
     }
 </style>

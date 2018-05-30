@@ -15,9 +15,11 @@ class PointListModel extends BaseListModel {
         return {pointView, pointModel}
     }
 
-    find(dom) {
-        let obj = this.list.find(function (value) {
-            return value.view.dom === dom
+    find({x,y}) {
+        x=parseInt(x)
+        y=parseInt(y)
+        let obj=this.list.find(function (point) {
+            return point.model.x===x&&point.model.y===y
         })
         return obj ? obj : {}
     }
