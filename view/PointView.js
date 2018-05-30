@@ -23,6 +23,7 @@ class PointView extends BaseView {
         this.text.setAttribute('dy', 8)
         this.text.setAttribute('fill', 'white')
         this.text.setAttribute('text-anchor', 'middle')
+        this.text.setAttribute('class', 'point')
         this.text.innerHTML = r
         svg.appendChild(this.dom)
         svg.appendChild(this.text)

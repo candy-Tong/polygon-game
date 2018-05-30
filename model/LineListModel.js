@@ -10,8 +10,10 @@ class LineListModel extends BaseListModel {
     }
 
     add(dom) {
-        let x = dom.getAttribute('cx')||dom.getAttribute('x')
-        let y = dom.getAttribute('cy')||dom.getAttribute('y')
+        let x = dom.getAttribute('cx') || dom.getAttribute('x')
+        let y = dom.getAttribute('cy') || dom.getAttribute('y')
+        x = parseInt(x)
+        y = parseInt(y)
         let lineView = new LineView({x, y})
         let lineModel = new LineModel({x, y})
         this.linkingLine = {lineView, lineModel}
@@ -21,8 +23,10 @@ class LineListModel extends BaseListModel {
     end(dom) {
         // 如果两点间已存在直线，停止该操作，并删除直线
         let {lineView, lineModel} = this.getLinkingLine()
-        let x = dom.getAttribute('cx')||dom.getAttribute('x')
-        let y = dom.getAttribute('cy')||dom.getAttribute('y')
+        let x = dom.getAttribute('cx') || dom.getAttribute('x')
+        let y = dom.getAttribute('cy') || dom.getAttribute('y')
+        x = parseInt(x)
+        y = parseInt(y)
         if ((lineModel.begin.x === x && lineModel.begin.y === y)
             || (this.find(lineModel.begin, {x, y}))
             || this.find(lineModel.begin).length > 2
@@ -43,12 +47,11 @@ class LineListModel extends BaseListModel {
      * @param y2
      * @returns {*}
      */
-    find({x: x1, y: y1}={}, {x: x2, y: y2}={}) {
-        x1=parseInt(x1)
-        y1=parseInt(y1)
-        x2=parseInt(x2)
-        y2=parseInt(y2)
-        // console.log({x: x1, y: y1}, {x: x2, y: y2})
+    find({x: x1, y: y1} = {}, {x: x2, y: y2} = {}) {
+        x1 = parseInt(x1)
+        y1 = parseInt(y1)
+        x2 = parseInt(x2)
+        y2 = parseInt(y2)
         if (arguments.length === 1) {
             return this.list.filter(function (line) {
                 // console.log(line.lineModel.begin.x === x1 && line.lineModel.begin.y === y1)
@@ -59,8 +62,10 @@ class LineListModel extends BaseListModel {
             }))
         } else if (arguments.length === 2) {
             return this.list.find(function (line) {
-                return line.lineModel.begin.x === x1 && line.lineModel.begin.y === y1 && line.lineModel.end.x === x2 && line.lineModel.end.y === y2
+                return (line.lineModel.begin.x === x1 && line.lineModel.begin.y === y1 && line.lineModel.end.x === x2 && line.lineModel.end.y === y2)
+                    || (line.lineModel.end.x === x1 && line.lineModel.end.y === y1 && line.lineModel.begin.x === x2 && line.lineModel.begin.y === y2)
             })
+
         } else {
             throw new Error('error argument num in ' + arguments.callee().name)
         }

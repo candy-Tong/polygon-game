@@ -8,7 +8,7 @@ class UIController extends BaseController {
         super()
         this.history = new HistoryModel()
         this.pointList = new PointListModel()
-        this.lineModel = new LineListModel()
+        this.lineList = new LineListModel()
         // 私有变量，外部不要使用
         this.action = undefined
         this.moveArguments = {
@@ -36,7 +36,7 @@ class UIController extends BaseController {
                     this.action = 'addLine'
                     this.addLineBegin(e)
                 }
-            } else if (e.target.nodeName === 'text') {
+            } else if (e.target.className.baseVal === 'point') {
                 if (e.button === 0) {
                     // 修改点的值
                     this.action = 'updatePointSize'
@@ -45,6 +45,16 @@ class UIController extends BaseController {
                     // 连线
                     this.action = 'addLine'
                     this.addLineBegin(e)
+                }
+            }else if(e.target.nodeName==='line'){
+                if (e.button === 0) {
+                    let x1=e.target.getAttribute('x1')
+                    let y1=e.target.getAttribute('y1')
+                    let x2=e.target.getAttribute('x2')
+                    let y2=e.target.getAttribute('y2')
+                    this.updateLineOperation({x1,y1},{x2,y2})
+                } else if (e.button === 2) {
+
                 }
             }
         }
@@ -111,7 +121,7 @@ class UIController extends BaseController {
                 x:this.moveArguments.moveElement.getAttribute('cx'),
                 y:this.moveArguments.moveElement.getAttribute('cy')
             })
-            let lineList = this.lineModel.find({x: pointModel.x, y: pointModel.y})
+            let lineList = this.lineList.find({x: pointModel.x, y: pointModel.y})
             lineList.forEach(function ({lineView, lineModel}) {
                 let anotherPosition = lineModel.getAnotherPosition({x: pointModel.x, y: pointModel.y})
                 lineView.modify(anotherPosition, {x: newX, y: newY})
@@ -133,14 +143,14 @@ class UIController extends BaseController {
 
     addLineBegin(e) {
         this.lineArgument.beginDom = e.target
-        this.lineModel.add(e.target)
+        this.lineList.add(e.target)
 
     }
 
     addLineMove(e) {
         // console.log({x: e.offsetX, y: e.offsetY})
         if (this.lineArgument.beginDom) {
-            let {lineView, lineModel} = this.lineModel.getLinkingLine()
+            let {lineView, lineModel} = this.lineList.getLinkingLine()
             lineView.modify(lineModel.begin, {x: e.offsetX, y: e.offsetY})
             lineModel.modify(lineModel.begin, {x: e.offsetX, y: e.offsetY})
         }
@@ -149,9 +159,9 @@ class UIController extends BaseController {
 
     addLineEnd(e) {
         if (e.target.nodeName === 'circle' || e.target.nodeName === 'text') {
-            this.lineModel.end(e.target)
+            this.lineList.end(e.target)
         } else {
-            this.lineModel.delete()
+            this.lineList.delete()
         }
     }
 
@@ -177,6 +187,13 @@ class UIController extends BaseController {
         this.updatePointSizeArguments.selectDom = null
         this.updatePointSizeArguments.baseX = undefined
         this.updatePointSizeArguments.baseR = undefined
+    }
+    updateLineOperation({x1,y1},{x2,y2}){
+        let {lineView,lineModel} = this.lineList.find({x:x1,y:y1},{x:x2,y:y2})
+        let operation=lineModel.operation==='+'?'×':'+'
+        lineView.modify(null,null,operation)
+        lineModel.modify(null,null,operation)
+
     }
 }
 
