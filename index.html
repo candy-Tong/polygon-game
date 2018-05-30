@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>多边形游戏</title>
+</head>
+<body>
+<svg id="board" width="80%" height="500px" ondrop="controller.addPoint(event)" ondragover="event.preventDefault()">
+</svg>
+<div>
+    <div class="drag-circle" draggable="true" ></div>
+    Drag into the board
+</div>
+<input placeholder="random num" type="text" />
+<button type="button">Random</button>
+
+</body>
+</html>
+<script>
+    let controller
+</script>
+<script type="module">
+    import {UIController} from "./controller/UIController.js";
+    controller=new UIController()
+
+
+</script>
+<script>
+
+</script>
+<style>
+    circle {
+        fill: #3498db;
+        stroke: #95a5a622;
+    }
+    circle:hover{
+        padding: 20px;
+    }
+    .drag-circle{
+        display: inline-block;
+        background-color: #3498db;
+        border-radius: 100%;
+        height: 50px;
+        width: 50px;
+    }
+</style>

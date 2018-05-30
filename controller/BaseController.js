@@ -1,0 +1,4 @@
+class BaseController {
+
+}
+export {BaseController}
