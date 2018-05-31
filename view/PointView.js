@@ -16,6 +16,7 @@ class PointView extends BaseView {
         this.dom.setAttribute('cx', x)
         this.dom.setAttribute('cy', y)
         this.dom.setAttribute('r', r)
+        this.dom.setAttribute('fill', '#3498db')
         this.text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
         this.text.setAttribute('x', x)
         this.text.setAttribute('y', y)
@@ -43,6 +44,21 @@ class PointView extends BaseView {
             r < 20 ? r = 20 : false
             this.dom.setAttribute('r', r)
         }
+    }
+
+    delete(){
+        let svg = document.getElementById('board')
+        svg.removeChild(this.dom)
+        svg.removeChild(this.text)
+
+    }
+
+    select(){
+        this.dom.setAttribute('fill', '#ff4757')
+    }
+    clearSelect(){
+        this.dom.removeAttribute('fill')
+        this.dom.setAttribute('fill', '#3498db')
     }
 
 }

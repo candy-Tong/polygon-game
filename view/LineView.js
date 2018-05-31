@@ -63,6 +63,8 @@ class LineView extends BaseView {
         svg.removeChild(this.operationDom)
     }
 
+
+
     modify(begin, end, operation) {
         if (begin && end) {
             this.dom.setAttribute('x1', begin.x)

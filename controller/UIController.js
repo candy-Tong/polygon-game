@@ -25,6 +25,9 @@ class UIController extends BaseController {
             baseX: undefined,
             baseR: undefined
         }
+        this.selectArguments={
+            selectDom: null
+        }
 
         // 事件委托
         document.onmousedown = (e) => {
@@ -32,6 +35,7 @@ class UIController extends BaseController {
                 if (e.button === 0) {
                     this.action = 'movePoint'
                     this.movePointBegin(e)
+                    this.selectPoint(e.target)
                 } else if (e.button === 2) {
                     this.action = 'addLine'
                     this.addLineBegin(e)
@@ -211,6 +215,7 @@ class UIController extends BaseController {
     }
 
     selectLine(dom) {
+        this.selectArguments.selectDom=dom
         let x1 = dom.getAttribute('x1')
         let y1 = dom.getAttribute('y1')
         let x2 = dom.getAttribute('x2')
@@ -219,18 +224,52 @@ class UIController extends BaseController {
         if (lineModel.isSelected) {
             lineView.clearSelect()
             lineModel.clearSelect()
+            this.selectArguments.selectDom=null
         } else {
             this.lineList.clearAllSelect()
+            this.pointList.clearAllSelect()
             lineView.select()
             lineModel.select()
         }
     }
 
-    delete() {
-        let line = this.lineList.findSelected()
-        if (line) {
-            this.lineList.delete(line)
+    selectPoint(dom) {
+        this.selectArguments.selectDom=dom
+        let x = dom.getAttribute('cx')
+        let y = dom.getAttribute('cy')
+
+        let {view: pointView, model: pointModel} = this.pointList.find({x, y})
+        if (pointModel.isSelected) {
+            pointView.clearSelect()
+            pointModel.clearSelect()
+            this.selectArguments.selectDom=null
+        } else {
+            this.lineList.clearAllSelect()
+            this.pointList.clearAllSelect()
+            pointView.select()
+            pointModel.select()
         }
+    }
+
+    delete() {
+
+        if(this.selectArguments.selectDom.nodeName==='circle'){
+            let point = this.pointList.findSelected()
+            if(point){
+                this.pointList.delete(point)
+            }
+            let lines=this.lineList.find(point.model)
+            console.log(lines)
+            lines.forEach( (line) =>{
+                this.lineList.delete(line)
+            })
+        }else if(this.selectArguments.selectDom.nodeName==='line'){
+            let line = this.lineList.findSelected()
+            if (line) {
+                this.lineList.delete(line)
+            }
+        }
+
     }
 
 }

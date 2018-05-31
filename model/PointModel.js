@@ -6,6 +6,7 @@ class PointModel extends BaseModel {
         this.x = parseInt(x)
         this.y = parseInt(y)
         this.r = parseInt(r)
+        this.isSelected = false
     }
 
     modify({x, y, r}) {
@@ -16,6 +17,14 @@ class PointModel extends BaseModel {
 
     remove() {
         this.redraw('delete')
+    }
+
+    select() {
+        this.isSelected = true
+    }
+
+    clearSelect() {
+        this.isSelected = false
     }
 }
 

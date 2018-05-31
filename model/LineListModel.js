@@ -96,15 +96,14 @@ class LineListModel extends BaseListModel {
     }
 
     delete(line) {
-        let {lineView} = line
         this.linkingLine = null
         let index = this.list.findIndex(function (value) {
-            return value.lineView === lineView
+            return value===line
         })
         this.list.splice(index, 1)
         console.log('delete')
         console.log(this.list)
-        lineView.delete()
+        line.lineView.delete()
     }
 }
 
