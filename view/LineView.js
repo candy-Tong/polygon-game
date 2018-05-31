@@ -86,7 +86,7 @@ class LineView extends BaseView {
                 this.operationDom.setAttribute('fill', '#eccc68')
                 this.dom.setAttribute('stroke', '#10ac84')
             } else if (operation === '×') {
-                this.operationDom.setAttribute('fill', '#2c3e50')
+                this.operationDom.setAttribute('fill', '#a4b0be')
                 this.dom.setAttribute('stroke', '#70a1ff')
             }
         }

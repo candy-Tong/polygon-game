@@ -10,6 +10,9 @@ class UIController extends BaseController {
         this.pointList = new PointListModel()
         this.lineList = new LineListModel()
         // 私有变量，外部不要使用
+        this.gameStatus = {
+            playing: false
+        }
         this.action = undefined
         this.moveArguments = {
             moveElement: null,
@@ -25,7 +28,7 @@ class UIController extends BaseController {
             baseX: undefined,
             baseR: undefined
         }
-        this.selectArguments={
+        this.selectArguments = {
             selectDom: null
         }
 
@@ -35,12 +38,14 @@ class UIController extends BaseController {
                 if (e.button === 0) {
                     this.action = 'movePoint'
                     this.movePointBegin(e)
-                    this.selectPoint(e.target)
-                } else if (e.button === 2) {
+                    if(!this.gameStatus.playing){
+                        this.selectPoint(e.target)
+                    }
+                } else if (e.button === 2&&!this.gameStatus.playing) {
                     this.action = 'addLine'
                     this.addLineBegin(e)
                 }
-            } else if (e.target.className.baseVal === 'point') {
+            } else if (e.target.className.baseVal === 'point'&&!this.gameStatus.playing) {
                 if (e.button === 0) {
                     // 修改点的值
                     this.action = 'updatePointSize'
@@ -57,7 +62,7 @@ class UIController extends BaseController {
                 } else if (e.button === 2) {
 
                 }
-            } else if (e.target.className.baseVal === 'operation') {
+            } else if (e.target.className.baseVal === 'operation'&&!this.gameStatus.playing) {
                 this.updateLineOperationByOperationDom(e.target)
             }
         }
@@ -215,7 +220,7 @@ class UIController extends BaseController {
     }
 
     selectLine(dom) {
-        this.selectArguments.selectDom=dom
+        this.selectArguments.selectDom = dom
         let x1 = dom.getAttribute('x1')
         let y1 = dom.getAttribute('y1')
         let x2 = dom.getAttribute('x2')
@@ -224,7 +229,7 @@ class UIController extends BaseController {
         if (lineModel.isSelected) {
             lineView.clearSelect()
             lineModel.clearSelect()
-            this.selectArguments.selectDom=null
+            this.selectArguments.selectDom = null
         } else {
             this.lineList.clearAllSelect()
             this.pointList.clearAllSelect()
@@ -234,7 +239,7 @@ class UIController extends BaseController {
     }
 
     selectPoint(dom) {
-        this.selectArguments.selectDom=dom
+        this.selectArguments.selectDom = dom
         let x = dom.getAttribute('cx')
         let y = dom.getAttribute('cy')
 
@@ -242,7 +247,7 @@ class UIController extends BaseController {
         if (pointModel.isSelected) {
             pointView.clearSelect()
             pointModel.clearSelect()
-            this.selectArguments.selectDom=null
+            this.selectArguments.selectDom = null
         } else {
             this.lineList.clearAllSelect()
             this.pointList.clearAllSelect()
@@ -252,24 +257,26 @@ class UIController extends BaseController {
     }
 
     delete() {
-
-        if(this.selectArguments.selectDom.nodeName==='circle'){
+        if (this.selectArguments.selectDom.nodeName === 'circle') {
             let point = this.pointList.findSelected()
-            if(point){
+            if (point) {
                 this.pointList.delete(point)
             }
-            let lines=this.lineList.find(point.model)
+            let lines = this.lineList.find(point.model)
             console.log(lines)
-            lines.forEach( (line) =>{
+            lines.forEach((line) => {
                 this.lineList.delete(line)
             })
-        }else if(this.selectArguments.selectDom.nodeName==='line'){
+        } else if (this.selectArguments.selectDom.nodeName === 'line') {
             let line = this.lineList.findSelected()
             if (line) {
                 this.lineList.delete(line)
             }
         }
+    }
 
+    beginGame() {
+        this.gameStatus.playing=true
     }
 
 }
