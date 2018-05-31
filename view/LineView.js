@@ -14,9 +14,9 @@ class LineView extends BaseView {
         this.dom.setAttribute('y1', point1.y)
         this.dom.setAttribute('x2', point1.x)
         this.dom.setAttribute('y2', point1.y)
-        if(operation==='+'){
+        if (operation === '+') {
             this.dom.setAttribute('stroke', '#10ac84')
-        }else if(operation==='×'){
+        } else if (operation === '×') {
             this.dom.setAttribute('stroke', '#2c3e50')
         }
         // this.dom.setAttribute('opacity', 0.5)
@@ -27,10 +27,10 @@ class LineView extends BaseView {
         this.operationDom.setAttribute('font-size', 30)
         this.operationDom.setAttribute('font-weight', 900)
         this.operationDom.setAttribute('dy', 8)
-        if(operation==='+'){
-            this.operationDom.setAttribute('fill', '#ff6b6b')
-        }else if(operation==='×'){
-            this.operationDom.setAttribute('fill', '#2c3e50')
+        if (operation === '+') {
+            this.operationDom.setAttribute('fill', '#ffa502')
+        } else if (operation === '×') {
+            this.operationDom.setAttribute('fill', '#a4b0be')
         }
         this.operationDom.setAttribute('class', 'operation')
         this.operationDom.setAttribute('text-anchor', 'middle')
@@ -39,6 +39,22 @@ class LineView extends BaseView {
         svg.insertBefore(this.operationDom, svg.childNodes[0])
         svg.insertBefore(this.dom, svg.childNodes[0])
         // svg.appendChild(this.dom)
+    }
+
+    select() {
+        this.dom.setAttribute('stroke', '#ff4757')
+        this.operationDom.setAttribute('fill', '#ff4757')
+    }
+
+    clearSelect() {
+        let operation = this.operationDom.innerHTML
+        if (operation === '+') {
+            this.operationDom.setAttribute('fill', '#ffa502')
+            this.dom.setAttribute('stroke', '#10ac84')
+        } else if (operation === '×') {
+            this.operationDom.setAttribute('fill', '#a4b0be')
+            this.dom.setAttribute('stroke', '#70a1ff')
+        }
     }
 
     delete() {
@@ -53,16 +69,26 @@ class LineView extends BaseView {
             this.dom.setAttribute('y1', begin.y)
             this.dom.setAttribute('x2', end.x)
             this.dom.setAttribute('y2', end.y)
-            let offsetX=0,offsetY=0
-            if(Math.abs(begin.x -end.x)>Math.abs(begin.y - end.y)){
-                offsetY=30
-            }else{
-                offsetX=30
+            let offsetX = 0, offsetY = 0
+            if (Math.abs(begin.x - end.x) > Math.abs(begin.y - end.y)) {
+                offsetY = 30
+            } else {
+                offsetX = 30
             }
-            this.operationDom.setAttribute('x', (begin.x + end.x-offsetX) / 2)
-            this.operationDom.setAttribute('y', (begin.y + end.y-offsetY) / 2)
+
+            this.operationDom.setAttribute('x', (begin.x + end.x - offsetX) / 2)
+            this.operationDom.setAttribute('y', (begin.y + end.y - offsetY) / 2)
         }
-        operation ?this.operationDom.innerHTML=operation:false
+        if (this.dom.getAttribute('stroke') !== '#ff4757') {
+            if (operation === '+') {
+                this.operationDom.setAttribute('fill', '#eccc68')
+                this.dom.setAttribute('stroke', '#10ac84')
+            } else if (operation === '×') {
+                this.operationDom.setAttribute('fill', '#2c3e50')
+                this.dom.setAttribute('stroke', '#70a1ff')
+            }
+        }
+        operation ? this.operationDom.innerHTML = operation : false
         operation ? this.operation = operation : false
     }
 

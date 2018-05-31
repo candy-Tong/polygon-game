@@ -1,7 +1,7 @@
 import {BaseModel} from './BaseModel.js'
 
 class LineModel extends BaseModel {
-    constructor(begin={}, end={}, operation = 'add') {
+    constructor(begin={}, end={}, operation = '+') {
         super()
         this.begin={
             x:parseInt(begin.x),
@@ -12,6 +12,14 @@ class LineModel extends BaseModel {
             y:parseInt((end.y))
         }
         this.operation = operation
+        this.isSelected=false
+    }
+
+    select(){
+        this.isSelected=true
+    }
+    clearSelect(){
+        this.isSelected=false
     }
 
     modify(begin={}, end={}, operation) {

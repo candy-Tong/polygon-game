@@ -23,7 +23,7 @@ class UIController extends BaseController {
         this.updatePointSizeArguments = {
             selectDom: null,
             baseX: undefined,
-            baseR:undefined
+            baseR: undefined
         }
 
         // 事件委托
@@ -40,22 +40,21 @@ class UIController extends BaseController {
                 if (e.button === 0) {
                     // 修改点的值
                     this.action = 'updatePointSize'
-                    this.updatePointSizeBegin(e.target,e.offsetX)
+                    this.updatePointSizeBegin(e.target, e.offsetX)
                 } else if (e.button === 2) {
                     // 连线
                     this.action = 'addLine'
                     this.addLineBegin(e)
                 }
-            }else if(e.target.nodeName==='line'){
+            } else if (e.target.nodeName === 'line') {
                 if (e.button === 0) {
-                    let x1=e.target.getAttribute('x1')
-                    let y1=e.target.getAttribute('y1')
-                    let x2=e.target.getAttribute('x2')
-                    let y2=e.target.getAttribute('y2')
-                    this.updateLineOperation({x1,y1},{x2,y2})
+                    // 单击选择线
+                    this.selectLine(e.target)
                 } else if (e.button === 2) {
 
                 }
+            } else if (e.target.className.baseVal === 'operation') {
+                this.updateLineOperationByOperationDom(e.target)
             }
         }
         document.onmousemove = (e) => {
@@ -68,7 +67,7 @@ class UIController extends BaseController {
                     this.addLineMove(e)
                     break
                 }
-                case 'updatePointSize':{
+                case 'updatePointSize': {
                     this.updatePointSizeMove(e.offsetX)
                     break
                 }
@@ -76,7 +75,6 @@ class UIController extends BaseController {
             }
         }
         document.onmouseup = (e) => {
-
             switch (this.action) {
                 case 'movePoint': {
                     this.movePointEnd(e)
@@ -88,6 +86,11 @@ class UIController extends BaseController {
                 }
             }
             this.action = undefined
+        }
+        document.onkeydown = (e) => {
+            if (e.code === 'Delete') {
+                this.delete()
+            }
         }
         document.oncontextmenu = function () {
             return false
@@ -118,8 +121,8 @@ class UIController extends BaseController {
             let newX = e.clientX - this.moveArguments.offset_x
             let newY = e.clientY - this.moveArguments.offset_y
             let {view: pointView, model: pointModel} = this.pointList.find({
-                x:this.moveArguments.moveElement.getAttribute('cx'),
-                y:this.moveArguments.moveElement.getAttribute('cy')
+                x: this.moveArguments.moveElement.getAttribute('cx'),
+                y: this.moveArguments.moveElement.getAttribute('cy')
             })
             let lineList = this.lineList.find({x: pointModel.x, y: pointModel.y})
             lineList.forEach(function ({lineView, lineModel}) {
@@ -134,8 +137,8 @@ class UIController extends BaseController {
 
     movePointEnd() {
         let {view: pointView, model: pointModel} = this.pointList.find({
-            x:this.moveArguments.moveElement.getAttribute('cx'),
-            y:this.moveArguments.moveElement.getAttribute('cy')
+            x: this.moveArguments.moveElement.getAttribute('cx'),
+            y: this.moveArguments.moveElement.getAttribute('cy')
         })
         // this.history.saveStatus('modify', {pointView, pointModel})
         this.moveArguments.moveElement = null
@@ -161,7 +164,7 @@ class UIController extends BaseController {
         if (e.target.nodeName === 'circle' || e.target.nodeName === 'text') {
             this.lineList.end(e.target)
         } else {
-            this.lineList.delete()
+            this.lineList.delete(this.lineList.linkingLine)
         }
     }
 
@@ -169,32 +172,67 @@ class UIController extends BaseController {
         this.updatePointSizeArguments.selectDom = dom
         this.updatePointSizeArguments.baseX = x
         let {model: pointModel} = this.pointList.find({
-            x:this.updatePointSizeArguments.selectDom .getAttribute('x'),
-            y:this.updatePointSizeArguments.selectDom .getAttribute('y')
+            x: this.updatePointSizeArguments.selectDom.getAttribute('x'),
+            y: this.updatePointSizeArguments.selectDom.getAttribute('y')
         })
-        this.updatePointSizeArguments.baseR=pointModel.r
+        this.updatePointSizeArguments.baseR = pointModel.r
     }
-    updatePointSizeMove(x){
+
+    updatePointSizeMove(x) {
         let {view: pointView, model: pointModel} = this.pointList.find({
-            x:this.updatePointSizeArguments.selectDom .getAttribute('x'),
-            y:this.updatePointSizeArguments.selectDom .getAttribute('y')
+            x: this.updatePointSizeArguments.selectDom.getAttribute('x'),
+            y: this.updatePointSizeArguments.selectDom.getAttribute('y')
         })
-        let increaseR=parseInt((x-this.updatePointSizeArguments.baseX)/10)
-        pointView.modify({r:this.updatePointSizeArguments.baseR+increaseR})
-        pointModel.modify({r:this.updatePointSizeArguments.baseR+increaseR})
+        let increaseR = parseInt((x - this.updatePointSizeArguments.baseX) / 10)
+        pointView.modify({r: this.updatePointSizeArguments.baseR + increaseR})
+        pointModel.modify({r: this.updatePointSizeArguments.baseR + increaseR})
     }
-    updatePointSizeEnd(){
+
+    updatePointSizeEnd() {
         this.updatePointSizeArguments.selectDom = null
         this.updatePointSizeArguments.baseX = undefined
         this.updatePointSizeArguments.baseR = undefined
     }
-    updateLineOperation({x1,y1},{x2,y2}){
-        let {lineView,lineModel} = this.lineList.find({x:x1,y:y1},{x:x2,y:y2})
-        let operation=lineModel.operation==='+'?'×':'+'
-        lineView.modify(null,null,operation)
-        lineModel.modify(null,null,operation)
+
+    updateLineOperationByLine({x1, y1}, {x2, y2}) {
+        let {lineView, lineModel} = this.lineList.find({x: x1, y: y1}, {x: x2, y: y2})
+        let operation = lineModel.operation === '+' ? '×' : '+'
+        lineView.modify(null, null, operation)
+        lineModel.modify(null, null, operation)
 
     }
+
+    updateLineOperationByOperationDom(dom) {
+        let {lineView, lineModel} = this.lineList.findByOperationDom(dom)
+        let operation = lineModel.operation === '+' ? '×' : '+'
+        lineView.modify(null, null, operation)
+        lineModel.modify(null, null, operation)
+
+    }
+
+    selectLine(dom) {
+        let x1 = dom.getAttribute('x1')
+        let y1 = dom.getAttribute('y1')
+        let x2 = dom.getAttribute('x2')
+        let y2 = dom.getAttribute('y2')
+        let {lineView, lineModel} = this.lineList.find({x: x1, y: y1}, {x: x2, y: y2})
+        if (lineModel.isSelected) {
+            lineView.clearSelect()
+            lineModel.clearSelect()
+        } else {
+            this.lineList.clearAllSelect()
+            lineView.select()
+            lineModel.select()
+        }
+    }
+
+    delete() {
+        let line = this.lineList.findSelected()
+        if (line) {
+            this.lineList.delete(line)
+        }
+    }
+
 }
 
 export {UIController}

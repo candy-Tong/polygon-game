@@ -69,15 +69,34 @@ class LineListModel extends BaseListModel {
         } else {
             throw new Error('error argument num in ' + arguments.callee().name)
         }
-
     }
+    findByOperationDom(dom){
+        return this.list.find(function (line) {
+            // console.log(line.lineModel.begin.x === x1 && line.lineModel.begin.y === y1)
+            return line.lineView.operationDom===dom
+        })
+    }
+
+    findSelected(){
+        return this.list.find(function (line) {
+            // console.log(line.lineModel.begin.x === x1 && line.lineModel.begin.y === y1)
+            return line.lineModel.isSelected===true
+        })
+    }
+    clearAllSelect(){
+        this.list.forEach(function (line){
+            line.lineView.clearSelect()
+            line.lineModel.clearSelect()
+        })
+    }
+
 
     getLinkingLine() {
         return this.linkingLine
     }
 
-    delete() {
-        let {lineView} = this.linkingLine
+    delete(line) {
+        let {lineView} = line
         this.linkingLine = null
         let index = this.list.findIndex(function (value) {
             return value.lineView === lineView
