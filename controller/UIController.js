@@ -34,37 +34,52 @@ class UIController extends BaseController {
 
         // 事件委托
         document.onmousedown = (e) => {
-            if (e.target.nodeName === 'circle') {
-                if (e.button === 0) {
-                    this.action = 'movePoint'
-                    this.movePointBegin(e)
-                    if(!this.gameStatus.playing){
+            if (!this.gameStatus.playing) {
+                if (e.target.nodeName === 'circle') {
+                    if (e.button === 0) {
+                        this.action = 'movePoint'
+                        this.movePointBegin(e)
                         this.selectPoint(e.target)
+                    } else if (e.button === 2) {
+                        this.action = 'addLine'
+                        this.addLineBegin(e)
                     }
-                } else if (e.button === 2&&!this.gameStatus.playing) {
-                    this.action = 'addLine'
-                    this.addLineBegin(e)
-                }
-            } else if (e.target.className.baseVal === 'point'&&!this.gameStatus.playing) {
-                if (e.button === 0) {
-                    // 修改点的值
-                    this.action = 'updatePointSize'
-                    this.updatePointSizeBegin(e.target, e.offsetX)
-                } else if (e.button === 2) {
-                    // 连线
-                    this.action = 'addLine'
-                    this.addLineBegin(e)
-                }
-            } else if (e.target.nodeName === 'line') {
-                if (e.button === 0) {
-                    // 单击选择线
-                    this.selectLine(e.target)
-                } else if (e.button === 2) {
+                } else if (e.target.className.baseVal === 'point' && !this.gameStatus.playing) {
+                    if (e.button === 0) {
+                        // 修改点的值
+                        this.action = 'updatePointSize'
+                        this.updatePointSizeBegin(e.target, e.offsetX)
+                    } else if (e.button === 2) {
+                        // 连线
+                        this.action = 'addLine'
+                        this.addLineBegin(e)
+                    }
+                } else if (e.target.nodeName === 'line') {
+                    if (e.button === 0) {
+                        // 单击选择线
+                        this.selectLine(e.target)
+                    } else if (e.button === 2) {
 
+                    }
+                } else if (e.target.className.baseVal === 'operation') {
+                    this.updateLineOperationByOperationDom(e.target)
                 }
-            } else if (e.target.className.baseVal === 'operation'&&!this.gameStatus.playing) {
-                this.updateLineOperationByOperationDom(e.target)
+            } else {
+                if (e.target.nodeName === 'circle') {
+                    if (e.button === 0) {
+                        this.action = 'movePoint'
+                        this.movePointBegin(e)
+                    }
+                } else if (e.target.nodeName === 'line') {
+                    if (e.button === 0) {
+                        // 单击选择线
+                        this.selectLine(e.target)
+                    } else if (e.button === 2) {
+
+                    }
+                }
             }
+
         }
         document.onmousemove = (e) => {
             switch (this.action) {
@@ -276,7 +291,7 @@ class UIController extends BaseController {
     }
 
     beginGame() {
-        this.gameStatus.playing=true
+        this.gameStatus.playing = true
     }
 
 }

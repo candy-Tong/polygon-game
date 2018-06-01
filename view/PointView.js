@@ -1,5 +1,4 @@
 import {BaseView} from './BaseView.js'
-
 class PointView extends BaseView {
     constructor({x, y, r = 35}) {
         super()
@@ -31,15 +30,27 @@ class PointView extends BaseView {
     }
 
     modify({x, y, r}) {
-        if (x) {
+        let presentR=parseInt(this.dom.getAttribute('r'))
+        if (x||x===0) {
+            // if(x-presentR<0){
+            //     x=presentR
+            // }else if(x+presentR>conf.width){
+            //     x=conf.width-presentR
+            // }
             this.dom.setAttribute('cx', x)
             this.text.setAttribute('x', x)
         }
-        if (y) {
+        if (y||y===0) {
+            // if(y-presentR<0){
+            //     y=presentR
+            // }else if(y+presentR>conf.height){
+            //     y=conf.height-presentR
+            // }
             this.dom.setAttribute('cy', y)
             this.text.setAttribute('y', y)
         }
-        if (r) {
+        if (r||r===0) {
+
             this.text.innerHTML = r
             r < 20 ? r = 20 : false
             this.dom.setAttribute('r', r)
