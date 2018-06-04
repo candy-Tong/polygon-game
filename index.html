@@ -7,13 +7,17 @@
 <body>
 <svg id="board" width="80%" height="500px" ondrop="controller.addPoint(event)" ondragover="event.preventDefault()">
 </svg>
-<div>
-    <div class="drag-circle" draggable="true"></div>
-    Drag into the board
+
+<div id="setting-wrapper">
+    <div>
+        <div class="drag-circle" draggable="true"></div>
+        Drag into the board
+    </div>
+    <input placeholder="random num" type="text"/>
+    <button type="button">Random</button>
+    <button id="start-game-button" type="button" onclick="controller.beginGame()">Start Game</button>
 </div>
-<input placeholder="random num" type="text"/>
-<button type="button">Random</button>
-<button id="start-game-button" type="button" onclick="controller.beginGame()">Start Game</button>
+<button type="button" onclick="controller.bestWay()">best way</button>
 
 </body>
 </html>

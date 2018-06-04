@@ -84,6 +84,13 @@ class LineListModel extends BaseListModel {
         }
     }
 
+    findById(id){
+        return this.list.find(function (line) {
+            // console.log(line.lineModel.begin.x === x1 && line.lineModel.begin.y === y1)
+            return line.lineModel.id === id
+        })
+    }
+
     findByOperationDom(dom) {
         return this.list.find(function (line) {
             // console.log(line.lineModel.begin.x === x1 && line.lineModel.begin.y === y1)

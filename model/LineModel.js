@@ -13,6 +13,7 @@ class LineModel extends BaseModel {
         }
         this.operation = operation
         this.isSelected=false
+        this.id=LineModel.id++
     }
 
     select(){
@@ -51,5 +52,5 @@ class LineModel extends BaseModel {
     }
 
 }
-
+LineModel.id=0
 export {LineModel}

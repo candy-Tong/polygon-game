@@ -112,26 +112,29 @@ class UIController extends BaseController {
             this.action = undefined
         }
         document.onkeydown = (e) => {
-            if (!this.gameStatus.playing){
+            if (!this.gameStatus.playing) {
                 if (e.code === 'Delete') {
                     this.delete()
                 }
             } else {
                 if (e.code === 'Enter') {
-                    this.mergePoint()
+                    if (this.selectArguments.selectDom.nodeName === 'line') {
+                        this.mergePoint(this.lineList.findSelected())
+                    }
+
                 }
             }
         }
         document.oncontextmenu = function () {
             return false
         }
-        document.ondblclick=(e)=>{
-            if(e.target.className.baseVal === 'point'){
+        document.ondblclick = (e) => {
+            if (e.target.className.baseVal === 'point') {
                 // 输入点的大小
             }
         }
-        document.onmousewheel=(e)=>{
-            if(e.target.className.baseVal === 'point'){
+        document.onmousewheel = (e) => {
+            if (e.target.className.baseVal === 'point') {
                 // 滚轮控制点的大小
             }
         }
@@ -201,7 +204,7 @@ class UIController extends BaseController {
     }
 
     addLineEnd(e) {
-        if ((e.target.nodeName === 'circle' || e.target.nodeName === 'text')&&e.target!==this.lineArgument.beginDom) {
+        if ((e.target.nodeName === 'circle' || e.target.nodeName === 'text') && e.target !== this.lineArgument.beginDom) {
             this.lineList.end(e.target)
         } else {
             this.lineList.delete(this.lineList.linkingLine)
@@ -314,62 +317,82 @@ class UIController extends BaseController {
 
     beginGame() {
         this.gameStatus.playing = true
-        let start=document.createElement('h5')
-        start.innerHTML='Start'
-        start.setAttribute('class','start')
-        document.body.removeChild(document.getElementById('start-game-button'))
+        let start = document.createElement('h5')
+        start.innerHTML = 'Start'
+        start.setAttribute('class', 'start')
+        document.body.removeChild(document.getElementById('setting-wrapper'))
         document.body.appendChild(start)
-        setTimeout(()=>{
+        setTimeout(() => {
             document.body.removeChild(start)
-        },2000)
+        }, 2000)
     }
 
-    mergePoint() {
-        if (this.selectArguments.selectDom.nodeName === 'line') {
-            let line = this.lineList.findSelected()
-            let operation=line.lineModel.operation
-            let x1 = line.lineModel.begin.x
-            let y1 = line.lineModel.begin.y
-            let x2 = line.lineModel.end.x
-            let y2 = line.lineModel.end.y
-            let point1 = this.pointList.find({x: x1, y: y1})
-            let point2 = this.pointList.find({x: x2, y: y2})
+    mergePoint(line) {
+        let operation = line.lineModel.operation
+        let x1 = line.lineModel.begin.x
+        let y1 = line.lineModel.begin.y
+        let x2 = line.lineModel.end.x
+        let y2 = line.lineModel.end.y
+        let point1 = this.pointList.find({x: x1, y: y1})
+        let point2 = this.pointList.find({x: x2, y: y2})
 
-            let centerX=(x1+x2)/2
-            let centerY=(y1+y2)/2
-            let r
-            if(operation==='+'){
-                r=point1.model.r+point2.model.r
-            }else if (operation==='×') {
-                r=point1.model.r*point2.model.r
-            }
-
-            let point1_Line=this.lineList.getAnotherLine(point1.model,line.lineModel.begin,line.lineModel.end)
-            let point1_another
-            if(point1_Line){
-                point1_another=point1_Line.lineModel.getAnotherPosition(point1.model)
-            }
-            let point2_Line=this.lineList.getAnotherLine(point2.model,line.lineModel.begin,line.lineModel.end)
-            let point2_another
-            if(point2_Line){
-                point2_another=point2_Line.lineModel.getAnotherPosition(point2.model)
-            }
-
-
-            this.deleteLine(line)
-            this.deletePoint(point1)
-            this.deletePoint(point2)
-            this.pointList.add({x:centerX,y:centerY,r:r})
-            if(point1_another){
-                this.lineList.addByPoint(point1_another,{x:centerX,y:centerY,r:r},point1_Line.lineModel.operation)
-            }
-            if(point2_another){
-                this.lineList.addByPoint(point2_another,{x:centerX,y:centerY,r:r},point2_Line.lineModel.operation)
-            }
-
-
-
+        let centerX = (x1 + x2) / 2
+        let centerY = (y1 + y2) / 2
+        let r
+        if (operation === '+') {
+            r = point1.model.r + point2.model.r
+        } else if (operation === '×') {
+            r = point1.model.r * point2.model.r
         }
+
+        let point1_Line = this.lineList.getAnotherLine(point1.model, line.lineModel.begin, line.lineModel.end)
+        let point1_another
+        if (point1_Line) {
+            point1_another = point1_Line.lineModel.getAnotherPosition(point1.model)
+        }
+        let point2_Line = this.lineList.getAnotherLine(point2.model, line.lineModel.begin, line.lineModel.end)
+        let point2_another
+        if (point2_Line) {
+            point2_another = point2_Line.lineModel.getAnotherPosition(point2.model)
+        }
+
+        if (point1_another) {
+            point1_Line.lineView.modify(point1_another, {x: centerX, y: centerY, r: r}, point1_Line.lineModel.operation)
+            point1_Line.lineModel.modify(point1_another, {
+                x: centerX,
+                y: centerY,
+                r: r
+            }, point1_Line.lineModel.operation)
+        }
+        if (point2_another) {
+            point2_Line.lineView.modify(point2_another, {x: centerX, y: centerY, r: r}, point2_Line.lineModel.operation)
+            point2_Line.lineModel.modify(point2_another, {
+                x: centerX,
+                y: centerY,
+                r: r
+            }, point2_Line.lineModel.operation)
+        }
+
+
+        this.deleteLine(line)
+        this.deletePoint(point1)
+        this.deletePoint(point2)
+        this.pointList.add({x: centerX, y: centerY, r: r})
+    }
+
+    bestWay() {
+        let list = [0, 2, 1]
+        list.forEach((id,index) => {
+            let line = this.lineList.findById(id)
+            setTimeout(()=>{
+                this.selectLine(line.lineView.dom)
+            },2500*(index+1)-1700)
+            setTimeout(()=>{
+                this.mergePoint(line)
+            },2500*(index+1))
+        })
+
+
     }
 
 }
