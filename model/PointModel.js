@@ -1,7 +1,7 @@
 import {BaseModel} from './BaseModel.js'
 
 class PointModel extends BaseModel {
-    constructor({x, y, r = 35}) {
+    constructor({x, y, r = 5}) {
         super()
         this.x = parseInt(x)
         this.y = parseInt(y)
