@@ -117,6 +117,9 @@ class UIController extends BaseController {
                     this.delete()
                 }
             } else {
+                if (e.code === 'Delete') {
+                    this.delete()
+                }
                 if (e.code === 'Enter') {
                     if (this.selectArguments.selectDom.nodeName === 'line') {
                         this.mergePoint(this.lineList.findSelected())
@@ -382,19 +385,20 @@ class UIController extends BaseController {
 
     bestWay() {
         let list = [0, 2, 1]
-        list.forEach((id,index) => {
+        list.forEach((id, index) => {
             let line = this.lineList.findById(id)
-            setTimeout(()=>{
+            setTimeout(() => {
                 this.selectLine(line.lineView.dom)
-            },2500*(index+1)-1700)
-            setTimeout(()=>{
+            }, 2500 * (index + 1) - 1700)
+            setTimeout(() => {
                 this.mergePoint(line)
-            },2500*(index+1))
+            }, 2500 * (index + 1))
         })
-
-
     }
-
+    export(){
+        console.log(this.pointList.export())
+        console.log(this.lineList.export())
+    }
 }
 
 export {UIController}

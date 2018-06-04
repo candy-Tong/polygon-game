@@ -20,15 +20,15 @@ class LineListModel extends BaseListModel {
         this.list.push({lineView, lineModel})
     }
 
-    addByPoint(begin, end,operation) {
+    addByPoint(begin, end, operation) {
         let lineView = new LineView({x: parseInt(begin.x), y: parseInt(begin.y)}, {
             x: parseInt(end.x),
             y: parseInt(end.y)
-        },operation)
+        }, operation)
         let lineModel = new LineModel({x: parseInt(begin.x), y: parseInt(begin.y)}, {
             x: parseInt(end.x),
             y: parseInt(end.y)
-        },operation)
+        }, operation)
         this.linkingLine = {lineView, lineModel}
         this.list.push({lineView, lineModel})
     }
@@ -84,7 +84,7 @@ class LineListModel extends BaseListModel {
         }
     }
 
-    findById(id){
+    findById(id) {
         return this.list.find(function (line) {
             // console.log(line.lineModel.begin.x === x1 && line.lineModel.begin.y === y1)
             return line.lineModel.id === id
@@ -123,19 +123,25 @@ class LineListModel extends BaseListModel {
             return value === line
         })
         this.list.splice(index, 1)
-        console.log('delete')
-        console.log(this.list)
+        // console.log('delete')
+        // console.log(this.list)
         line.lineView.delete()
     }
 
     getAnotherLine(point, begin, end) {
         let lines = this.find({x: parseInt(point.x), y: parseInt(point.y)})
         return lines.find(function (line) {
-            console.log((line.lineModel.begin.x !== begin.x && line.lineModel.begin.y !== begin.y && line.lineModel.end.x !== end.x && line.lineModel.end.y !== end.y))
-            console.log((line.lineModel.begin.x !== end.x && line.lineModel.begin.y !== end.y && line.lineModel.end.x !== begin.x && line.lineModel.end.y !== begin.y))
             return (line.lineModel.begin.x !== begin.x || line.lineModel.begin.y !== begin.y || line.lineModel.end.x !== end.x || line.lineModel.end.y !== end.y) &&
                 (line.lineModel.begin.x !== end.x || line.lineModel.begin.y !== end.y || line.lineModel.end.x !== begin.x || line.lineModel.end.y !== begin.y)
         })
+    }
+
+    export() {
+        let lineList = []
+        this.list.forEach((line) => {
+            lineList.push(line.lineModel.export())
+        })
+        return lineList
     }
 }
 

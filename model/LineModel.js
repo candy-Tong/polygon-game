@@ -47,10 +47,16 @@ class LineModel extends BaseModel {
         }
     }
 
-    mergePoint() {
-
+    export(){
+        return {
+            point:[
+                {x:this.begin.x,y:this.begin.y},
+                {x:this.end.x,y:this.end.y}
+            ],
+            operation:this.operation,
+            id:this.id
+        }
     }
-
 }
 LineModel.id=0
 export {LineModel}

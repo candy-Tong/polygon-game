@@ -46,6 +46,13 @@ class PointListModel extends BaseListModel {
             point.model.clearSelect()
         })
     }
+    export(){
+        let pointList=[]
+        this.list.forEach((point)=>{
+            pointList.push(point.model.export())
+        })
+        return pointList
+    }
 
 
 }

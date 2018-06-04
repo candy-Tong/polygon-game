@@ -7,10 +7,11 @@ class PointModel extends BaseModel {
         this.y = parseInt(y)
         this.r = parseInt(r)
         this.isSelected = false
+        this.id = PointModel.id++
     }
 
     modify({x, y, r}) {
-        if (x||x===0) {
+        if (x || x === 0) {
             // if (x - this.r < 0) {
             //     x = this.r
             // } else if (x + this.r > conf.width) {
@@ -18,7 +19,7 @@ class PointModel extends BaseModel {
             // }
             this.x = parseInt(x)
         }
-        if (y||y===0) {
+        if (y || y === 0) {
             // if (y - this.r < 0) {
             //     y = this.r
             // } else if (y + this.r > conf.height) {
@@ -26,7 +27,7 @@ class PointModel extends BaseModel {
             // }
             this.y = parseInt(y)
         }
-        r||r===0 ? this.r = parseInt(r) : false
+        r || r === 0 ? this.r = parseInt(r) : false
     }
 
     remove() {
@@ -41,7 +42,17 @@ class PointModel extends BaseModel {
         this.isSelected = false
     }
 
+    export() {
+        return {
+            x: this.x,
+            y: this.y,
+            r: this.r,
+            id: this.id
+        }
+    }
+
 
 }
 
+PointModel.id = 0
 export {PointModel}
