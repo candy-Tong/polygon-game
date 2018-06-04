@@ -46,6 +46,8 @@ class PointListModel extends BaseListModel {
             point.model.clearSelect()
         })
     }
+
+
 }
 
 // let pointListModel=new PointListModel()

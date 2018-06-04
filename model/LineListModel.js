@@ -20,6 +20,19 @@ class LineListModel extends BaseListModel {
         this.list.push({lineView, lineModel})
     }
 
+    addByPoint(begin, end,operation) {
+        let lineView = new LineView({x: parseInt(begin.x), y: parseInt(begin.y)}, {
+            x: parseInt(end.x),
+            y: parseInt(end.y)
+        },operation)
+        let lineModel = new LineModel({x: parseInt(begin.x), y: parseInt(begin.y)}, {
+            x: parseInt(end.x),
+            y: parseInt(end.y)
+        },operation)
+        this.linkingLine = {lineView, lineModel}
+        this.list.push({lineView, lineModel})
+    }
+
     end(dom) {
         // 如果两点间已存在直线，停止该操作，并删除直线
         let {lineView, lineModel} = this.getLinkingLine()
@@ -70,21 +83,23 @@ class LineListModel extends BaseListModel {
             throw new Error('error argument num in ' + arguments.callee().name)
         }
     }
-    findByOperationDom(dom){
+
+    findByOperationDom(dom) {
         return this.list.find(function (line) {
             // console.log(line.lineModel.begin.x === x1 && line.lineModel.begin.y === y1)
-            return line.lineView.operationDom===dom
+            return line.lineView.operationDom === dom
         })
     }
 
-    findSelected(){
+    findSelected() {
         return this.list.find(function (line) {
             // console.log(line.lineModel.begin.x === x1 && line.lineModel.begin.y === y1)
-            return line.lineModel.isSelected===true
+            return line.lineModel.isSelected === true
         })
     }
-    clearAllSelect(){
-        this.list.forEach(function (line){
+
+    clearAllSelect() {
+        this.list.forEach(function (line) {
             line.lineView.clearSelect()
             line.lineModel.clearSelect()
         })
@@ -98,12 +113,22 @@ class LineListModel extends BaseListModel {
     delete(line) {
         this.linkingLine = null
         let index = this.list.findIndex(function (value) {
-            return value===line
+            return value === line
         })
         this.list.splice(index, 1)
         console.log('delete')
         console.log(this.list)
         line.lineView.delete()
+    }
+
+    getAnotherLine(point, begin, end) {
+        let lines = this.find({x: parseInt(point.x), y: parseInt(point.y)})
+        return lines.find(function (line) {
+            console.log((line.lineModel.begin.x !== begin.x && line.lineModel.begin.y !== begin.y && line.lineModel.end.x !== end.x && line.lineModel.end.y !== end.y))
+            console.log((line.lineModel.begin.x !== end.x && line.lineModel.begin.y !== end.y && line.lineModel.end.x !== begin.x && line.lineModel.end.y !== begin.y))
+            return (line.lineModel.begin.x !== begin.x || line.lineModel.begin.y !== begin.y || line.lineModel.end.x !== end.x || line.lineModel.end.y !== end.y) &&
+                (line.lineModel.begin.x !== end.x || line.lineModel.begin.y !== end.y || line.lineModel.end.x !== begin.x || line.lineModel.end.y !== begin.y)
+        })
     }
 }
 

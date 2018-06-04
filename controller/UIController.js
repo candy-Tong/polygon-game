@@ -112,8 +112,10 @@ class UIController extends BaseController {
             this.action = undefined
         }
         document.onkeydown = (e) => {
-            if (e.code === 'Delete') {
+            if (e.code === 'Delete' && !this.gameStatus.playing) {
                 this.delete()
+            } else if (e.code === 'Enter') {
+                this.mergePoint()
             }
         }
         document.oncontextmenu = function () {
@@ -185,7 +187,7 @@ class UIController extends BaseController {
     }
 
     addLineEnd(e) {
-        if (e.target.nodeName === 'circle' || e.target.nodeName === 'text') {
+        if ((e.target.nodeName === 'circle' || e.target.nodeName === 'text')&&e.target!==this.lineArgument.beginDom) {
             this.lineList.end(e.target)
         } else {
             this.lineList.delete(this.lineList.linkingLine)
@@ -272,26 +274,80 @@ class UIController extends BaseController {
     }
 
     delete() {
-        if (this.selectArguments.selectDom.nodeName === 'circle') {
-            let point = this.pointList.findSelected()
-            if (point) {
-                this.pointList.delete(point)
-            }
-            let lines = this.lineList.find(point.model)
-            console.log(lines)
-            lines.forEach((line) => {
-                this.lineList.delete(line)
-            })
+        if (this.selectArguments.selectDom && this.selectArguments.selectDom.nodeName === 'circle') {
+            this.deletePoint(this.pointList.findSelected())
         } else if (this.selectArguments.selectDom.nodeName === 'line') {
-            let line = this.lineList.findSelected()
-            if (line) {
-                this.lineList.delete(line)
-            }
+            this.deleteLine(this.lineList.findSelected())
+        }
+    }
+
+    deletePoint(point) {
+        if (point) {
+            this.pointList.delete(point)
+        }
+        let lines = this.lineList.find(point.model)
+        console.log(lines)
+        lines.forEach((line) => {
+            this.lineList.delete(line)
+        })
+    }
+
+    deleteLine(line) {
+        if (line) {
+            this.lineList.delete(line)
         }
     }
 
     beginGame() {
         this.gameStatus.playing = true
+    }
+
+    mergePoint() {
+        if (this.selectArguments.selectDom.nodeName === 'line') {
+            let line = this.lineList.findSelected()
+            let operation=line.lineModel.operation
+            let x1 = line.lineModel.begin.x
+            let y1 = line.lineModel.begin.y
+            let x2 = line.lineModel.end.x
+            let y2 = line.lineModel.end.y
+            let point1 = this.pointList.find({x: x1, y: y1})
+            let point2 = this.pointList.find({x: x2, y: y2})
+
+            let centerX=(x1+x2)/2
+            let centerY=(y1+y2)/2
+            let r
+            if(operation==='+'){
+                r=point1.model.r+point2.model.r
+            }else if (operation==='×') {
+                r=point1.model.r*point2.model.r
+            }
+
+            let point1_Line=this.lineList.getAnotherLine(point1.model,line.lineModel.begin,line.lineModel.end)
+            let point1_another
+            if(point1_Line){
+                point1_another=point1_Line.lineModel.getAnotherPosition(point1.model)
+            }
+            let point2_Line=this.lineList.getAnotherLine(point2.model,line.lineModel.begin,line.lineModel.end)
+            let point2_another
+            if(point2_Line){
+                point2_another=point2_Line.lineModel.getAnotherPosition(point2.model)
+            }
+
+
+            this.deleteLine(line)
+            this.deletePoint(point1)
+            this.deletePoint(point2)
+            this.pointList.add({x:centerX,y:centerY,r:r})
+            if(point1_another){
+                this.lineList.addByPoint(point1_another,{x:centerX,y:centerY,r:r},point1_Line.lineModel.operation)
+            }
+            if(point2_another){
+                this.lineList.addByPoint(point2_another,{x:centerX,y:centerY,r:r},point2_Line.lineModel.operation)
+            }
+
+
+
+        }
     }
 
 }

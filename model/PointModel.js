@@ -40,6 +40,8 @@ class PointModel extends BaseModel {
     clearSelect() {
         this.isSelected = false
     }
+
+
 }
 
 export {PointModel}

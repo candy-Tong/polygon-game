@@ -12,8 +12,14 @@ class LineView extends BaseView {
         this.dom.setAttribute('id', LineView.id++)
         this.dom.setAttribute('x1', point1.x)
         this.dom.setAttribute('y1', point1.y)
-        this.dom.setAttribute('x2', point1.x)
-        this.dom.setAttribute('y2', point1.y)
+        if(point2.x!==undefined&&point2.y!==undefined){
+            this.dom.setAttribute('x2', point2.x)
+            this.dom.setAttribute('y2', point2.y)
+        }else {
+            this.dom.setAttribute('x2', point1.x)
+            this.dom.setAttribute('y2', point1.y)
+        }
+
         if (operation === '+') {
             this.dom.setAttribute('stroke', '#10ac84')
         } else if (operation === '×') {
@@ -22,15 +28,29 @@ class LineView extends BaseView {
         // this.dom.setAttribute('opacity', 0.5)
         this.dom.setAttribute('style', 'stroke-width: 5px')
         this.operationDom = document.createElementNS('http://www.w3.org/2000/svg', 'text')
-        this.operationDom.setAttribute('x', point1.x)
-        this.operationDom.setAttribute('y', point1.y)
+        if(point2.x!==undefined&&point2.y!==undefined){
+            let offsetX = 0, offsetY = 0
+            if (Math.abs(point1.x - point2.x) > Math.abs(point1.y - point2.y)) {
+                offsetY = 30
+            } else {
+                offsetX = 30
+            }
+            this.operationDom.setAttribute('x', (point1.x + point2.x - offsetX) / 2)
+            this.operationDom.setAttribute('y', (point1.y + point2.y - offsetY) / 2)
+        }else {
+            this.operationDom.setAttribute('x', point1.x)
+            this.operationDom.setAttribute('y', point1.y)
+        }
+
         this.operationDom.setAttribute('font-size', 30)
         this.operationDom.setAttribute('font-weight', 900)
         this.operationDom.setAttribute('dy', 8)
         if (operation === '+') {
             this.operationDom.setAttribute('fill', '#ffa502')
+            this.dom.setAttribute('stroke', '#10ac84')
         } else if (operation === '×') {
             this.operationDom.setAttribute('fill', '#a4b0be')
+            this.dom.setAttribute('stroke', '#70a1ff')
         }
         this.operationDom.setAttribute('class', 'operation')
         this.operationDom.setAttribute('text-anchor', 'middle')
