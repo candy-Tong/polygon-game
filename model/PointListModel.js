@@ -24,9 +24,9 @@ class PointListModel extends BaseListModel {
         return obj ? obj : {}
     }
 
-    findSelected(){
+    findSelected() {
         return this.list.find(function (point) {
-            return point.model.isSelected===true
+            return point.model.isSelected === true
         })
     }
 
@@ -46,12 +46,21 @@ class PointListModel extends BaseListModel {
             point.model.clearSelect()
         })
     }
-    export(){
-        let pointList=[]
-        this.list.forEach((point)=>{
+
+    export() {
+        let pointList = []
+        this.list.forEach((point) => {
             pointList.push(point.model.export())
         })
         return pointList
+    }
+
+    import(list) {
+        list.forEach((point) => {
+            let pointModel = PointModel.import(point)
+            let pointView = new PointView(point)
+            this.list.push({view:pointView, model:pointModel})
+        })
     }
 
 

@@ -143,6 +143,14 @@ class LineListModel extends BaseListModel {
         })
         return lineList
     }
+
+    import(list) {
+        list.forEach((line) => {
+            let lineModel = LineModel.import(line)
+            let lineView = new LineView(line.point[0], line.point[1], line.operation)
+            this.list.push({lineView, lineModel})
+        })
+    }
 }
 
 export {LineListModel}

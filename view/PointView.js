@@ -78,6 +78,9 @@ class PointView extends BaseView {
         this.dom.removeAttribute('fill')
         this.dom.setAttribute('fill', '#3498db')
     }
+    static import(obj){
+        return new PointView(obj)
+    }
 
 }
 

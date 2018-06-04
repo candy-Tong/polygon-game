@@ -152,7 +152,7 @@ class UIController extends BaseController {
             x: e.clientX - this.moveArguments.offset_x,
             y: e.clientY - this.moveArguments.offset_y
         })
-        // this.history.saveStatus('add', {pointView, pointModel})
+        // this.history.saveStatus({points:this.pointList.export(),lines:this.lineList.export()})
     }
 
     movePointBegin(e) {
@@ -188,6 +188,7 @@ class UIController extends BaseController {
         })
         // this.history.saveStatus('modify', {pointView, pointModel})
         this.moveArguments.moveElement = null
+        // this.history.saveStatus({points:this.pointList.export(),lines:this.lineList.export()})
     }
 
     addLineBegin(e) {
@@ -209,6 +210,7 @@ class UIController extends BaseController {
     addLineEnd(e) {
         if ((e.target.nodeName === 'circle' || e.target.nodeName === 'text') && e.target !== this.lineArgument.beginDom) {
             this.lineList.end(e.target)
+            // this.history.saveStatus({points:this.pointList.export(),lines:this.lineList.export()})
         } else {
             this.lineList.delete(this.lineList.linkingLine)
         }
@@ -238,6 +240,7 @@ class UIController extends BaseController {
         this.updatePointSizeArguments.selectDom = null
         this.updatePointSizeArguments.baseX = undefined
         this.updatePointSizeArguments.baseR = undefined
+        // this.history.saveStatus({points:this.pointList.export(),lines:this.lineList.export()})
     }
 
     updateLineOperationByLine({x1, y1}, {x2, y2}) {
@@ -328,6 +331,7 @@ class UIController extends BaseController {
         setTimeout(() => {
             document.body.removeChild(start)
         }, 2000)
+        this.history.saveStatus({points: this.pointList.export(), lines: this.lineList.export()})
     }
 
     mergePoint(line) {
@@ -381,6 +385,7 @@ class UIController extends BaseController {
         this.deletePoint(point1)
         this.deletePoint(point2)
         this.pointList.add({x: centerX, y: centerY, r: r})
+        this.history.saveStatus({points: this.pointList.export(), lines: this.lineList.export()})
     }
 
     bestWay() {
@@ -395,9 +400,67 @@ class UIController extends BaseController {
             }, 2500 * (index + 1))
         })
     }
-    export(){
-        console.log(this.pointList.export())
-        console.log(this.lineList.export())
+
+    export() {
+        console.log(JSON.stringify(this.pointList.export()))
+        console.log(JSON.stringify(this.lineList.export()))
+    }
+
+    import(obj) {
+        obj = {
+            'points': [
+                {'x': 365, 'y': 149, 'r': 5, 'id': 0},
+                {'x': 246, 'y': 204, 'r': 5, 'id': 1},
+                {'x': 391, 'y': 284, 'r': 5, 'id': 2},
+                {'x': 562, 'y': 162, 'r': 5, 'id': 3}
+            ],
+            'lines': [
+                {
+                    'point': [
+                        {'x': 365, 'y': 149},
+                        {'x': 246, 'y': 204}
+                    ],
+                    'operation': '+',
+                    'id': 0
+                },
+                {
+                    'point': [
+                        {'x': 246, 'y': 204},
+                        {'x': 391, 'y': 284}
+                    ],
+                    'operation': '+',
+                    'id': 1
+                },
+                {
+                    'point': [
+                        {'x': 391, 'y': 284},
+                        {'x': 562, 'y': 162}
+                    ],
+                    'operation': '+',
+                    'id': 2
+                }
+            ]
+        }
+        console.log(obj)
+        this.pointList.import(obj.points)
+        this.lineList.import(obj.lines)
+    }
+
+    goback(step=1) {
+        // this.lineList.list.forEach((line)=>{
+        //     this.lineList.delete(line)
+        // })
+        // this.pointList.list.forEach((point)=>{
+        //     this.pointList.delete(point)
+        // })
+        this.lineList.list=[]
+        this.pointList.list=[]
+        document.getElementsByTagName('svg')[0].innerHTML=''
+
+        let obj = this.history.goback(step)
+        console.log(obj)
+        this.pointList.import(obj.points)
+        this.lineList.import(obj.lines)
     }
 }
 

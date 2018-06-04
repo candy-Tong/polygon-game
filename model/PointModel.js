@@ -1,13 +1,13 @@
 import {BaseModel} from './BaseModel.js'
 
 class PointModel extends BaseModel {
-    constructor({x, y, r = 5}) {
+    constructor({x, y, r = 5, id}) {
         super()
         this.x = parseInt(x)
         this.y = parseInt(y)
         this.r = parseInt(r)
         this.isSelected = false
-        this.id = PointModel.id++
+        id ? this.id = id : this.id = PointModel.id++
     }
 
     modify({x, y, r}) {
@@ -51,6 +51,9 @@ class PointModel extends BaseModel {
         }
     }
 
+    static import(obj) {
+        return new PointModel(obj)
+    }
 
 }
 
