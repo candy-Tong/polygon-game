@@ -112,14 +112,28 @@ class UIController extends BaseController {
             this.action = undefined
         }
         document.onkeydown = (e) => {
-            if (e.code === 'Delete' && !this.gameStatus.playing) {
-                this.delete()
-            } else if (e.code === 'Enter') {
-                this.mergePoint()
+            if (!this.gameStatus.playing){
+                if (e.code === 'Delete') {
+                    this.delete()
+                }
+            } else {
+                if (e.code === 'Enter') {
+                    this.mergePoint()
+                }
             }
         }
         document.oncontextmenu = function () {
             return false
+        }
+        document.ondblclick=(e)=>{
+            if(e.target.className.baseVal === 'point'){
+                // 输入点的大小
+            }
+        }
+        document.onmousewheel=(e)=>{
+            if(e.target.className.baseVal === 'point'){
+                // 滚轮控制点的大小
+            }
         }
     }
 
@@ -300,6 +314,14 @@ class UIController extends BaseController {
 
     beginGame() {
         this.gameStatus.playing = true
+        let start=document.createElement('h5')
+        start.innerHTML='Start'
+        start.setAttribute('class','start')
+        document.body.removeChild(document.getElementById('start-game-button'))
+        document.body.appendChild(start)
+        setTimeout(()=>{
+            document.body.removeChild(start)
+        },2000)
     }
 
     mergePoint() {

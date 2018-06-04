@@ -13,8 +13,7 @@
 </div>
 <input placeholder="random num" type="text"/>
 <button type="button">Random</button>
-<button type="button" onclick="controller.beginGame()">Start Game</button>
-
+<button id="start-game-button" type="button" onclick="controller.beginGame()">Start Game</button>
 
 </body>
 </html>
@@ -55,5 +54,53 @@
         height: 50px;
         width: 50px;
         cursor: move;
+    }
+    @keyframes start {
+        0% {
+            -webkit-transform: scale(2);
+            -moz-transform: scale(2);
+            -o-transform: scale(2);
+            transform: scale(2);
+        }
+        65% {
+            -webkit-transform: scale(1.2);
+            -moz-transform: scale(1.2);
+            -o-transform: scale(1.2);
+            transform: scale(1.2);
+            opacity: 1;
+        }
+        100% {
+            -webkit-transform: scale(2);
+            -moz-transform:scale(2);
+            -o-transform:scale(2);
+            transform:scale(2);
+            opacity: 0;
+        }
+    }
+    .start {
+        opacity: 0;
+        animation: start 1s;
+        -webkit-transform: scale(2);
+        -moz-transform: scale(2);
+        -o-transform: scale(2);
+        transform: scale(2);
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        width: 500px;
+        height: 150px;
+        line-height: 150px;
+        text-align: center;
+        font-size: 150px;
+        color: #3498db;
+        font-family: "Arial", "Microsoft YaHei", "黑体", "宋体", sans-serif;
+        letter-spacing: 0.1em;
+        transition: all 0.5s;
+        -moz-transition: all 0.5s; /* Firefox 4 */
+        -webkit-transition: all 0.5s; /* Safari 和 Chrome */
+        -o-transition: all 0.5s; /* Opera */
     }
 </style>

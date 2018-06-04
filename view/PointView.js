@@ -16,7 +16,7 @@ class PointView extends BaseView {
         this.dom.setAttribute('cx', x)
         this.dom.setAttribute('cy', y)
         let R = Math.sqrt(r / 3) * 8
-        R < 15 ? R = 15 : false
+        R < 20 ? R = 20 : false
         R > 60 ? R = 60 : false
 
         this.dom.setAttribute('r', R)
@@ -57,7 +57,7 @@ class PointView extends BaseView {
 
             let R = Math.sqrt(r / 3) * 8
             this.text.innerHTML = r
-            R < 15 ? R = 15 : false
+            R < 20 ? R = 20 : false
             R > 60 ? R = 60 : false
             this.dom.setAttribute('r', R)
         }
