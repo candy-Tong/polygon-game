@@ -50,7 +50,7 @@ class LineModel extends BaseModel {
 
     export() {
         return {
-            point: [
+            points: [
                 {x: this.begin.x, y: this.begin.y},
                 {x: this.end.x, y: this.end.y}
             ],
@@ -60,7 +60,7 @@ class LineModel extends BaseModel {
     }
 
     static import(obj) {
-        return new LineModel(obj.point[0], obj.point[1], obj.operation, obj.id)
+        return new LineModel(obj.points[0], obj.points[1], obj.operation, obj.id)
     }
 }
 

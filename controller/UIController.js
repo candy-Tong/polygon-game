@@ -2,6 +2,7 @@ import {BaseController} from './BaseController.js'
 import {HistoryModel} from '../model/HistoryModel.js'
 import {PointListModel} from '../model/PointListModel.js'
 import {LineListModel} from '../model/LineListModel.js'
+import {bestWay,pointChange} from '../algorithm.js'
 
 class UIController extends BaseController {
     constructor() {
@@ -302,6 +303,9 @@ class UIController extends BaseController {
         } else if (this.selectArguments.selectDom.nodeName === 'line') {
             this.deleteLine(this.lineList.findSelected())
         }
+        if (this.gameStatus.playing) {
+            this.history.saveStatus({points: this.pointList.export(), lines: this.lineList.export()})
+        }
     }
 
     deletePoint(point) {
@@ -330,7 +334,7 @@ class UIController extends BaseController {
         document.body.appendChild(start)
         setTimeout(() => {
             document.body.removeChild(start)
-        }, 2000)
+        }, 1000)
         this.history.saveStatus({points: this.pointList.export(), lines: this.lineList.export()})
     }
 
@@ -389,73 +393,50 @@ class UIController extends BaseController {
     }
 
     bestWay() {
-        let list = [0, 2, 1]
+        let data = this.export()
+        let list = bestWay(pointChange(data.points, data.lines))
+
         list.forEach((id, index) => {
             let line = this.lineList.findById(id)
             setTimeout(() => {
                 this.selectLine(line.lineView.dom)
             }, 2500 * (index + 1) - 1700)
             setTimeout(() => {
-                this.mergePoint(line)
+                if(index===0){
+                    this.deleteLine(line)
+                }else{
+                    this.mergePoint(line)
+                }
             }, 2500 * (index + 1))
         })
+
     }
 
     export() {
         console.log(JSON.stringify(this.pointList.export()))
         console.log(JSON.stringify(this.lineList.export()))
+        return {
+            points: this.pointList.export(),
+            lines: this.lineList.export()
+        }
     }
 
     import(obj) {
-        obj = {
-            'points': [
-                {'x': 365, 'y': 149, 'r': 5, 'id': 0},
-                {'x': 246, 'y': 204, 'r': 5, 'id': 1},
-                {'x': 391, 'y': 284, 'r': 5, 'id': 2},
-                {'x': 562, 'y': 162, 'r': 5, 'id': 3}
-            ],
-            'lines': [
-                {
-                    'point': [
-                        {'x': 365, 'y': 149},
-                        {'x': 246, 'y': 204}
-                    ],
-                    'operation': '+',
-                    'id': 0
-                },
-                {
-                    'point': [
-                        {'x': 246, 'y': 204},
-                        {'x': 391, 'y': 284}
-                    ],
-                    'operation': '+',
-                    'id': 1
-                },
-                {
-                    'point': [
-                        {'x': 391, 'y': 284},
-                        {'x': 562, 'y': 162}
-                    ],
-                    'operation': '+',
-                    'id': 2
-                }
-            ]
-        }
         console.log(obj)
         this.pointList.import(obj.points)
         this.lineList.import(obj.lines)
     }
 
-    goback(step=1) {
+    goback(step = 1) {
         // this.lineList.list.forEach((line)=>{
         //     this.lineList.delete(line)
         // })
         // this.pointList.list.forEach((point)=>{
         //     this.pointList.delete(point)
         // })
-        this.lineList.list=[]
-        this.pointList.list=[]
-        document.getElementsByTagName('svg')[0].innerHTML=''
+        this.lineList.list = []
+        this.pointList.list = []
+        document.getElementsByTagName('svg')[0].innerHTML = ''
 
         let obj = this.history.goback(step)
         console.log(obj)
